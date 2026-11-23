@@ -1,4 +1,3 @@
-
 @extends('templates.layoutApp')
 
 @push('style')
@@ -38,6 +37,16 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createProductModal"
+                            >
+                                <i class="bi bi-plus-circle me-1" aria-hidden="true"></i>
+                                PRODUCT
+                            </button>
+
                             <h3 class="card-title">Products List</h3>
 
                             <div class="card-tools">
@@ -102,6 +111,10 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('modal')
+    @include('products.modal')
 @endsection
 
 @push('script')

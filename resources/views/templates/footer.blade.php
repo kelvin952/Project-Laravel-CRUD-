@@ -1,4 +1,3 @@
-
 <!--begin::Footer-->
 <footer class="app-footer">
     <!--begin::To the end-->
@@ -16,6 +15,8 @@
 <!--end::Footer-->
 </div>
 <!--end::App Wrapper-->
+
+@yield('modal')
 
 <!--begin::Script-->
 <!--begin::Third Party Plugin(OverlayScrollbars)-->

@@ -54,7 +54,9 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        return view('products.edit', compact('product'));
     }
 
     /**
@@ -62,7 +64,27 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('products', 'public');
+        } else {
+            unset($validated['image']);
+        }
+
+        $product->update($validated);
+
+        return redirect()
+            ->route('products.index')
+            ->with('success', 'Product berhasil diperbarui.');
     }
 
     /**
