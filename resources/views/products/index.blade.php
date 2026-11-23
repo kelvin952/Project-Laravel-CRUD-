@@ -124,8 +124,43 @@
     ></script>
 
     <script>
+        let productTable;
+
+        async function deleteProduct(id) {
+            const confirmed = confirm('Yakin ingin menghapus produk ini?');
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                const response = await fetch("{{ url('products') }}/" + id, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: new URLSearchParams({
+                        _token: '{{ csrf_token() }}',
+                        _method: 'DELETE'
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || 'Produk gagal dihapus.');
+                }
+
+                alert(result.message || 'Produk berhasil dihapus.');
+                await productTable.replaceData();
+            } catch (error) {
+                alert(error.message || 'Terjadi kesalahan saat menghapus produk.');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            const table = new Tabulator('#product-table', {
+            productTable = new Tabulator('#product-table', {
                 ajaxURL: "{{ route('products.api') }}",
                 layout: 'fitColumns',
                 filterMode: 'local',
@@ -176,7 +211,7 @@
                 ]
             });
 
-            table.on('tableBuilt', () => {
+            productTable.on('tableBuilt', () => {
                 const grid = document.getElementById('product-table');
 
                 grid.removeAttribute('aria-owns');
@@ -188,7 +223,7 @@
                     .setAttribute('role', 'presentation');
             });
 
-            table.on('renderComplete', () => {
+            productTable.on('renderComplete', () => {
                 document.querySelectorAll('#table-pagination button')
                     .forEach((button) => {
                         button.classList.add(
@@ -203,29 +238,29 @@
                 const value = e.target.value;
 
                 if (value) {
-                    table.setFilter([
+                    productTable.setFilter([
                         [
                             { field: 'name', type: 'like', value: value }
                         ]
                     ]);
                 } else {
-                    table.clearFilter();
+                    productTable.clearFilter();
                 }
             });
 
             document.getElementById('export-csv')
                 .addEventListener('click', () => {
-                    table.download('csv', 'products.csv');
+                    productTable.download('csv', 'products.csv');
                 });
 
             document.getElementById('export-json')
                 .addEventListener('click', () => {
-                    table.download('json', 'products.json');
+                    productTable.download('json', 'products.json');
                 });
 
             document.getElementById('print-table')
                 .addEventListener('click', () => {
-                    table.print(false, true);
+                    productTable.print(false, true);
                 });
         });
     </script>
